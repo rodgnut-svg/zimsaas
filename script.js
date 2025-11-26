@@ -73,53 +73,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+// ===== Contact Form Handling =====
+const contactForm = document.getElementById('contact-form');
 
-    // ===== Contact Form Handling =====
-    const contactForm = document.getElementById('contact-form');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Gather form data
-            const formData = {
-                fullName: document.getElementById('fullName').value.trim(),
-                businessName: document.getElementById('businessName').value.trim(),
-                whatsapp: document.getElementById('whatsapp').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                automationGoals: document.getElementById('automationGoals').value.trim()
-            };
-            
-            // Log form data to console
-            console.log('=== ZimSaaS Demo Request ===');
-            console.log('Form submitted successfully!');
-            console.log('Form Data:', formData);
-            console.table(formData);
-            
-            // Show success feedback
-            const submitBtn = contactForm.querySelector('.btn-submit');
-            const originalText = submitBtn.innerHTML;
-            
-            submitBtn.innerHTML = `
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M20 6L9 17l-5-5"/>
-                </svg>
-                <span>Request Sent!</span>
-            `;
-            submitBtn.style.background = '#10b981';
-            submitBtn.style.boxShadow = '0 0 30px rgba(16, 185, 129, 0.35)';
-            submitBtn.disabled = true;
-            
-            // Reset form after delay
-            setTimeout(() => {
-                contactForm.reset();
-                submitBtn.innerHTML = originalText;
-                submitBtn.style.background = '';
-                submitBtn.style.boxShadow = '';
-                submitBtn.disabled = false;
-            }, 3000);
-        });
+if (contactForm) {
+  contactForm.addEventListener('submit', () => {
+    // Optional UX: disable button / change text
+    const submitBtn = contactForm.querySelector('.btn-submit, button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
     }
+    // IMPORTANT: no e.preventDefault() here
+    // Browser will POST to /.netlify/functions/ghl-form
+  });
+}
+
 
 
     // ===== Navbar Background on Scroll =====
