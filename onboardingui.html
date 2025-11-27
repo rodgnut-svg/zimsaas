@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZimSaaS Client Onboarding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body.onboarding-body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, rgba(0, 212, 255, 0.08), transparent 40%),
+                        linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 60%, var(--bg-primary) 100%);
+            padding: clamp(5rem, 6vw, 6.5rem) 1.5rem 4rem;
+        }
+
+        .onboarding-decoration {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.35;
+        }
+
+        .orb.one {
+            width: 480px;
+            height: 480px;
+            top: -120px;
+            right: 10%;
+            background: var(--accent-blue);
+        }
+
+        .orb.two {
+            width: 320px;
+            height: 320px;
+            bottom: 5%;
+            left: 8%;
+            background: #7C4DFF;
+        }
+
+        .onboarding-nav {
+            max-width: var(--container-max);
+            margin: 0 auto 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            background: rgba(10, 10, 15, 0.65);
+            backdrop-filter: blur(12px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .onboarding-nav h1 {
+            font-size: 1.35rem;
+            letter-spacing: -0.01em;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--accent-blue);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .onboarding-main {
+            max-width: 980px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .intro-card {
+            background: rgba(13, 13, 20, 0.85);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .intro-card h2 {
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .intro-card p {
+            color: var(--text-secondary);
+            max-width: 640px;
+        }
+
+        .onboarding-shell {
+            background: rgba(13, 13, 20, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 26px;
+            padding: clamp(2rem, 4vw, 3rem);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.35);
+        }
+
+        .progress-tracker {
+            margin-bottom: 2.5rem;
+        }
+
+        .progress-line {
+            position: relative;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-line-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent-blue), #60a5fa);
+            transition: width var(--transition-smooth);
+        }
+
+        .progress-steps {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            margin-top: 1.25rem;
+            gap: 1rem;
+        }
+
+        .progress-steps li {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .progress-steps li .step-pill {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+        }
+
+        .progress-steps li.active {
+            color: var(--text-primary);
+        }
+
+        .progress-steps li.active .step-pill {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+            border-color: transparent;
+            box-shadow: var(--shadow-glow);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .form-step {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-step h3 {
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .form-step p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .form-grid.two-col {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .form-grid.three-col {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .checkbox-group,
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .checkbox-chip,
+        .radio-chip {
+            background: var(--bg-input);
+            border: 1px solid var(--border-input);
+            border-radius: 999px;
+            padding: 0.55rem 1.1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+
+        input[type="checkbox"]:checked + span,
+        input[type="radio"]:checked + span {
+            color: var(--bg-primary);
+            background: var(--accent-blue);
+            border-color: transparent;
+        }
+
+        .checkbox-chip input,
+        .radio-chip input {
+            display: none;
+        }
+
+        .textarea {
+            min-height: 110px;
+        }
+
+        .review-list {
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 1.5rem;
+            background: rgba(18, 18, 26, 0.9);
+            display: grid;
+            gap: 1rem;
+        }
+
+        .review-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .review-item span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .review-item strong {
+            font-size: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-actions .btn {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .success-panel {
+            margin-top: 2rem;
+            padding: 1.75rem;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            background: rgba(0, 212, 255, 0.08);
+            color: var(--text-primary);
+            display: none;
+        }
+
+        .success-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .onboarding-nav {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .progress-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="onboarding-body">
+    <div class="onboarding-decoration">
+        <span class="orb one"></span>
+        <span class="orb two"></span>
+    </div>
+
+    <header class="onboarding-nav">
+        <div>
+            <div class="badge">Client Workspace</div>
+            <h1>ZimSaaS Launch Onboarding</h1>
+        </div>
+        <p class="nav-meta">Answer honestly — this guides your tailored setup.</p>
+    </header>
+
+    <main class="onboarding-main">
+        <section class="intro-card">
+            <h2>Let’s blueprint your rollout</h2>
+            <p>We use this short, four-step flow to capture everything required to deploy your ZimSaaS ecosystem — from brand context to launch logistics. Drop in the best info you have right now; we can always refine during our kickoff call.</p>
+        </section>
+
+        <section class="onboarding-shell">
+            <div class="progress-tracker">
+                <div class="progress-line">
+                    <span class="progress-line-fill" id="progressFill"></span>
+                </div>
+                <ol class="progress-steps" id="progressSteps">
+                    <li class="active"><span class="step-pill">1</span>Foundation</li>
+                    <li><span class="step-pill">2</span>Objectives</li>
+                    <li><span class="step-pill">3</span>Logistics</li>
+                    <li><span class="step-pill">4</span>Review</li>
+                </ol>
+            </div>
+
+            <form id="onboardingForm" name="zimsaas-onboarding" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="zimsaas-onboarding">
+                <p class="hidden">
+                    <label>Don’t fill this out if you’re human: <input name="bot-field"></label>
+                </p>
+
+                <div class="form-step active" data-step="0">
+                    <h3>Company Foundation</h3>
+                    <p>Baseline contact details help us configure your workspace and billing profile.</p>
+                    <div class="form-grid two-col">
+                        <div class="form-group">
+                            <label for="companyName">Company / project name*</label>
+                            <input id="companyName" name="companyName" type="text" required placeholder="Zim Labs Collective">
+                        </div>
+                        <div class="form-group">
+                            <label for="primaryContact">Primary contact*</label>
+                            <input id="primaryContact" name="primaryContact" type="text" required placeholder="Nomsa Dhlamini">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Best email*</label>
+                            <input id="contactEmail" name="contactEmail" type="email" required placeholder="you@company.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="contactPhone">WhatsApp / phone</label>
+                            <input id="contactPhone" name="contactPhone" type="tel" placeholder="+263 (77) 000 0000">
+                        </div>
+                    </div>
+                    <div class="form-grid two-col">
+                        <div class="form-group">
+                            <label for="industry">Primary industry</label>
+                            <select id="industry" name="industry">
+                                <option value="">Select industry</option>
+                                <option>Education</option>
+                                <option>Healthcare</option>
+                                <option>Logistics</option>
+                                <option>Professional Services</option>
+                                <option>Retail & Commerce</option>
+                                <option>Other / Hybrid</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="teamSize">Team size</label>
+                            <select id="teamSize" name="teamSize">
+                                <option value="">Select</option>
+                                <option>Solo / founder-led</option>
+                                <option>2 – 10</option>
+                                <option>11 – 30</option>
+                                <option>31 – 100</option>
+                                <option>100+</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="existingStack">Existing tools / tech stack</label>
+                        <textarea id="existingStack" name="existingStack" class="textarea" placeholder="CRM, marketing, booking, payment tools we should know about"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-step" data-step="1">
+                    <h3>Objectives & Wins</h3>
+                    <p>Share what success looks like and the activations you want us to prioritize.</p>
+                    <div class="form-group">
+                        <label>Top outcomes you’re expecting (select all that apply)</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="goals" value="Lead generation">
+                                <span>Lead generation</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="goals" value="Client portal / onboarding">
+                                <span>Client portal / onboarding</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="goals" value="Automations">
+                                <span>Automations</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="goals" value="Reporting insights">
+                                <span>Reporting insights</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="goals" value="Fulfilment workflows">
+                                <span>Fulfilment workflows</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="goals" value="Other">
+                                <span>Other</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-grid two-col">
+                        <div class="form-group">
+                            <label for="primaryOffer">Flagship offer / product</label>
+                            <input id="primaryOffer" name="primaryOffer" type="text" placeholder="e.g. Done-for-you funnel builds">
+                        </div>
+                        <div class="form-group">
+                            <label for="decisionDrivers">What convinced you to work with us?</label>
+                            <input id="decisionDrivers" name="decisionDrivers" type="text" placeholder="Social proof, feature, speed, etc.">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="kpis">Any KPIs or numbers we should aim for?</label>
+                        <textarea id="kpis" name="kpis" class="textarea" placeholder="Monthly leads, demo conversions, retention uplift, etc."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-step" data-step="2">
+                    <h3>Launch Logistics</h3>
+                    <p>This guides scheduling, billing and the assets we prep for your rollout.</p>
+                    <div class="form-grid two-col">
+                        <div class="form-group">
+                            <label for="timeline">Desired go-live window*</label>
+                            <select id="timeline" name="timeline" required>
+                                <option value="">Select</option>
+                                <option>ASAP — within 2 weeks</option>
+                                <option>3 – 4 weeks</option>
+                                <option>5 – 8 weeks</option>
+                                <option>Flexible</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="budgetTier">Budget tier</label>
+                            <select id="budgetTier" name="budgetTier">
+                                <option value="">Select</option>
+                                <option>Starter (under $2k)</option>
+                                <option>Growth ($2k – $5k)</option>
+                                <option>Scale ($5k+)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Activation modules to prioritize</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="modules" value="Acquisition funnels">
+                                <span>Acquisition funnels</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="modules" value="CRM & automations">
+                                <span>CRM & automations</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="modules" value="Fulfilment + delivery">
+                                <span>Fulfilment + delivery</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="modules" value="Client analytics">
+                                <span>Client analytics</span>
+                            </label>
+                            <label class="checkbox-chip">
+                                <input type="checkbox" name="modules" value="Team enablement">
+                                <span>Team enablement</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="assets">Links to brand assets, folders or references</label>
+                        <textarea id="assets" name="assets" class="textarea" placeholder="Drive / Dropbox links, brand kits, copy docs, logos, etc."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-step" data-step="3">
+                    <h3>Review & Submit</h3>
+                    <p>Double-check your details. You can always update during onboarding calls.</p>
+                    <div class="review-list" id="reviewList">
+                        <div class="review-item">
+                            <span>Company</span>
+                            <strong>Pending input</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="backBtn" disabled>Back</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn">Next Step</button>
+                    <button type="submit" class="btn btn-primary hidden" id="submitBtn">Submit onboarding</button>
+                </div>
+            </form>
+
+            <div class="success-panel" id="successPanel">
+                <h4>Awesome — we’ve got everything we need.</h4>
+                <p>Expect a confirmation email shortly. Our team reviews every onboarding within one business day and will reach out with next steps plus your kickoff time slots.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById('onboardingForm');
+        const steps = Array.from(document.querySelectorAll('.form-step'));
+        const progressSteps = Array.from(document.querySelectorAll('#progressSteps li'));
+        const progressFill = document.getElementById('progressFill');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        const reviewList = document.getElementById('reviewList');
+        const successPanel = document.getElementById('successPanel');
+        let currentStep = 0;
+
+        const updateUI = () => {
+            steps.forEach((step, index) => {
+                step.classList.toggle('active', index === currentStep);
+            });
+
+            progressSteps.forEach((item, index) => {
+                item.classList.toggle('active', index <= currentStep);
+            });
+
+            const progressPercent = (currentStep / (steps.length - 1)) * 100;
+            progressFill.style.width = `${progressPercent}%`;
+
+            backBtn.disabled = currentStep === 0;
+            const isFinalStep = currentStep === steps.length - 1;
+            nextBtn.classList.toggle('hidden', isFinalStep);
+            submitBtn.classList.toggle('hidden', !isFinalStep);
+
+            if (isFinalStep) {
+                populateReview();
+            }
+        };
+
+        const validateStep = () => {
+            const inStep = steps[currentStep];
+            const requiredInputs = Array.from(inStep.querySelectorAll('[required]'));
+            return requiredInputs.every((input) => input.checkValidity());
+        };
+
+        const populateReview = () => {
+            const dataPoints = [
+                { label: 'Company', value: form.companyName.value || '—' },
+                { label: 'Primary contact', value: form.primaryContact.value || '—' },
+                { label: 'Email', value: form.contactEmail.value || '—' },
+                { label: 'Phone', value: form.contactPhone.value || '—' },
+                { label: 'Industry', value: form.industry.value || '—' },
+                { label: 'Team size', value: form.teamSize.value || '—' },
+                { label: 'Existing stack', value: form.existingStack.value || '—' },
+                { label: 'Goals', value: Array.from(form.querySelectorAll('input[name="goals"]:checked')).map((node) => node.value).join(', ') || '—' },
+                { label: 'Primary offer', value: form.primaryOffer.value || '—' },
+                { label: 'Decision drivers', value: form.decisionDrivers.value || '—' },
+                { label: 'KPIs', value: form.kpis.value || '—' },
+                { label: 'Timeline', value: form.timeline.value || '—' },
+                { label: 'Budget', value: form.budgetTier.value || '—' },
+                { label: 'Activation modules', value: Array.from(form.querySelectorAll('input[name="modules"]:checked')).map((node) => node.value).join(', ') || '—' },
+                { label: 'Assets / links', value: form.assets.value || '—' }
+            ];
+
+            reviewList.innerHTML = dataPoints.map((item) => `
+                <div class="review-item">
+                    <span>${item.label}</span>
+                    <strong>${item.value}</strong>
+                </div>
+            `).join('');
+        };
+
+        nextBtn.addEventListener('click', () => {
+            if (!validateStep()) {
+                form.reportValidity();
+                return;
+            }
+            if (currentStep < steps.length - 1) {
+                currentStep += 1;
+                updateUI();
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep -= 1;
+                updateUI();
+            }
+        });
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const formData = new FormData(form);
+                const body = new URLSearchParams(formData).toString();
+                await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body
+                });
+
+                successPanel.classList.add('active');
+                form.reset();
+                currentStep = 0;
+                updateUI();
+            } catch (error) {
+                alert('Something went wrong submitting your onboarding. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit onboarding';
+            }
+        });
+
+        updateUI();
+    </script>
+</body>
+</html>
