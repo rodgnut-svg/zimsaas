@@ -12,7 +12,7 @@ export async function handler(event) {
   
     // GHL Inbound Webhook URL
     const GHL_WEBHOOK_URL =
-      "https://services.leadconnectorhq.com/hooks/d31VoHRqFQkp8xwPkN21/webhook-trigger/7ae7c4be-35da-4de9-988e-55f352b36d1d";
+      "https://services.leadconnectorhq.com/hooks/d31VoHRqFQkp8xwPkN21/webhook-trigger/b275d69d-c635-4f3a-b9f5-d738cd5335ef";
   
     // Parse form-urlencoded body from the HTML form
     const params = new URLSearchParams(event.body);
