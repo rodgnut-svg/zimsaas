@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const contactForm = document.getElementById('contact-form');
 
 if (contactForm) {
-  contactForm.addEventListener('submit', () => {
+  contactForm.addEventListener('submit', (e) => {
     // Optional UX: disable button / change text
     const submitBtn = contactForm.querySelector('.btn-submit, button[type="submit"]');
     if (submitBtn) {
@@ -86,6 +86,7 @@ if (contactForm) {
     }
     // IMPORTANT: no e.preventDefault() here
     // Browser will POST to /.netlify/functions/ghl-form
+    // Form will submit naturally
   });
 }
 
