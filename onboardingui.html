@@ -61,9 +61,20 @@
             z-index: 1;
         }
 
+        .onboarding-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .onboarding-nav h1 {
             font-size: 1.35rem;
             letter-spacing: -0.01em;
+        }
+
+        .onboarding-nav .brand-logo {
+            width: 48px;
+            height: auto;
         }
 
         .badge {
@@ -219,19 +230,30 @@
 
         .checkbox-chip,
         .radio-chip {
-            background: var(--bg-input);
-            border: 1px solid var(--border-input);
-            border-radius: 999px;
-            padding: 0.55rem 1.1rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+            border: none;
+            background: transparent;
+            padding: 0;
             cursor: pointer;
             transition: var(--transition-fast);
         }
 
+        .checkbox-chip span,
+        .radio-chip span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.55rem 1.1rem;
+            border-radius: 999px;
+            border: 1px solid var(--border-input);
+            background: var(--bg-input);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            transition: inherit;
+        }
+
         input[type="checkbox"]:checked + span,
         input[type="radio"]:checked + span {
-            color: var(--bg-primary);
+            color: #ffffff;
             background: var(--accent-blue);
             border-color: transparent;
         }
@@ -330,9 +352,16 @@
     </div>
 
     <header class="onboarding-nav">
-        <div>
-            <div class="badge">Client Workspace</div>
-            <h1>ZimSaaS Launch Onboarding</h1>
+        <div class="onboarding-brand">
+            <img 
+                src="assets/logo.png" 
+                alt="ZimSaaS logo" 
+                class="brand-logo"
+            />
+            <div>
+                <div class="badge">Client Workspace</div>
+                <h1>ZimSaaS Launch Onboarding</h1>
+            </div>
         </div>
         <p class="nav-meta">Answer honestly — this guides your tailored setup.</p>
     </header>
@@ -383,29 +412,58 @@
                             <input id="contactPhone" name="contactPhone" type="tel" placeholder="+263 (77) 000 0000">
                         </div>
                     </div>
-                    <div class="form-grid two-col">
-                        <div class="form-group">
-                            <label for="industry">Primary industry</label>
-                            <select id="industry" name="industry">
-                                <option value="">Select industry</option>
-                                <option>Education</option>
-                                <option>Healthcare</option>
-                                <option>Logistics</option>
-                                <option>Professional Services</option>
-                                <option>Retail & Commerce</option>
-                                <option>Other / Hybrid</option>
-                            </select>
+                    <div class="form-group">
+                        <label>Primary industry</label>
+                        <div class="radio-group">
+                            <label class="radio-chip">
+                                <input type="radio" name="industry" value="Education">
+                                <span>Education</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="industry" value="Healthcare">
+                                <span>Healthcare</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="industry" value="Logistics">
+                                <span>Logistics</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="industry" value="Professional Services">
+                                <span>Professional Services</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="industry" value="Retail & Commerce">
+                                <span>Retail & Commerce</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="industry" value="Other / Hybrid">
+                                <span>Other / Hybrid</span>
+                            </label>
                         </div>
-                        <div class="form-group">
-                            <label for="teamSize">Team size</label>
-                            <select id="teamSize" name="teamSize">
-                                <option value="">Select</option>
-                                <option>Solo / founder-led</option>
-                                <option>2 – 10</option>
-                                <option>11 – 30</option>
-                                <option>31 – 100</option>
-                                <option>100+</option>
-                            </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Team size</label>
+                        <div class="radio-group">
+                            <label class="radio-chip">
+                                <input type="radio" name="teamSize" value="Solo / founder-led">
+                                <span>Solo / founder-led</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="teamSize" value="2 – 10">
+                                <span>2 – 10</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="teamSize" value="11 – 30">
+                                <span>11 – 30</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="teamSize" value="31 – 100">
+                                <span>31 – 100</span>
+                            </label>
+                            <label class="radio-chip">
+                                <input type="radio" name="teamSize" value="100+">
+                                <span>100+</span>
+                            </label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -588,8 +646,8 @@
                 { label: 'Primary contact', value: form.primaryContact.value || '—' },
                 { label: 'Email', value: form.contactEmail.value || '—' },
                 { label: 'Phone', value: form.contactPhone.value || '—' },
-                { label: 'Industry', value: form.industry.value || '—' },
-                { label: 'Team size', value: form.teamSize.value || '—' },
+                { label: 'Industry', value: form.querySelector('input[name="industry"]:checked')?.value || '—' },
+                { label: 'Team size', value: form.querySelector('input[name="teamSize"]:checked')?.value || '—' },
                 { label: 'Existing stack', value: form.existingStack.value || '—' },
                 { label: 'Goals', value: Array.from(form.querySelectorAll('input[name="goals"]:checked')).map((node) => node.value).join(', ') || '—' },
                 { label: 'Primary offer', value: form.primaryOffer.value || '—' },
