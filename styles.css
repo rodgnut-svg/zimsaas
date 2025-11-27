@@ -850,6 +850,76 @@ input, textarea {
     box-shadow: 0 0 50px rgba(0, 212, 255, 0.4);
 }
 
+/* ===== Thank You Section ===== */
+.thank-you-section {
+    min-height: calc(100vh - var(--nav-height));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--nav-height) + 4rem) 1.5rem 4rem;
+    background: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 212, 255, 0.08), transparent),
+        linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    position: relative;
+}
+
+.thank-you-container {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.thank-you-content {
+    text-align: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.thank-you-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: var(--accent-blue-dim);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 50%;
+    margin-bottom: 2rem;
+    color: var(--accent-blue);
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+}
+
+.thank-you-icon svg {
+    width: 40px;
+    height: 40px;
+}
+
+.thank-you-heading {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.thank-you-subheading {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.thank-you-content .btn {
+    margin-top: 1rem;
+}
+
 /* ===== Footer ===== */
 .footer {
     padding: 2.5rem 1.5rem;
